@@ -1,15 +1,36 @@
+#!/bin/python3
+import sys
+import subprocess
+import os
+import signal
 import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
 
 current_connection = None
+vpn_process = None
 connect_buttons = []
 
-def connect_vpn():
-    print("00")
+def connect_vpn(vpn_file):
+    global vpn_process
+    if vpn_process is None:
+        vpn_process = subprocess.Popen(
+            ["sudo", "openvpn", "--config", str(vpn_file)],
+        )
+        print(f"Connecting to {vpn_file}")
+        print(f"Process: {vpn_process}")
+    else:
+        print("VPN already running!")
 
 def disconnect_vpn():
-    print("11")
+    global vpn_process
+    if vpn_process is not None:
+        # Завершаем процесс openvpn
+        os.kill(vpn_process.pid, signal.SIGKILL)
+        vpn_process = None
+        print("Disconnected.")
+    else:
+        print("No VPN connection running.")
 
 def connect(vpn_file, button):
     global current_connection
@@ -35,8 +56,8 @@ def disconnect():
     global current_connection
     print("Disconnect function called")
 
-    disconnect_vpn()
-    
+    disconnect_vpn(vpn_file)
+
     # Все кнопки возвращаются в "Connect" (синие)
     for btn in connect_buttons:
         btn.config(text="Connect", style="Primary.TButton")
