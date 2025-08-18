@@ -1,98 +1,120 @@
 #!/bin/python3
-import sys
 import subprocess
-import os
-import signal
 import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
+import threading
 
 current_connection = None
-vpn_process = None
 connect_buttons = []
 
-def connect_vpn(vpn_file):
-    global vpn_process
-    if vpn_process is None:
-        vpn_process = subprocess.Popen(
-            ["sudo", "openvpn", "--config", str(vpn_file)],
-        )
-        print(f"Connecting to {vpn_file}")
-        print(f"Process: {vpn_process}")
-    else:
-        print("VPN already running!")
-
 def disconnect_vpn():
-    global vpn_process
-    if vpn_process is not None:
-        # Завершаем процесс openvpn
-        os.kill(vpn_process.pid, signal.SIGKILL)
-        vpn_process = None
-        print("Disconnected.")
-    else:
-        print("No VPN connection running.")
+    """Завершает все процессы OpenVPN."""
+    try:
+        subprocess.run(["sudo", "pkill", "-9", "openvpn"], check=False)
+        print("All OpenVPN processes killed.")
+    except Exception as e:
+        print(f"Error killing VPN processes: {e}")
+
+def connect_vpn(vpn_file, timeout=3):
+    """Запускает OpenVPN с выбранным конфигом и ждёт инициализации."""
+    try:
+        process = subprocess.Popen(
+            ["sudo", "openvpn", "--config", str(vpn_file)],
+            stderr=subprocess.STDOUT,
+            stdout=subprocess.PIPE,
+            text=True
+        )
+
+        connected = False
+
+        def read_output():
+            nonlocal connected
+            for line in process.stdout:
+                print(line, end="")
+                if "Initialization Sequence Completed" in line:
+                    connected = True
+                    break
+
+        t = threading.Thread(target=read_output)
+        t.start()
+        t.join(timeout)
+
+        if connected:
+            print(f"{vpn_file.name} connected successfully!")
+            return process
+        else:
+            print(f"{vpn_file.name} failed to connect within {timeout} seconds.")
+            disconnect_vpn()
+            return False
+    except Exception as e:
+        print(f"Error during VPN connection: {e}")
+        return False
 
 def connect(vpn_file, button):
-    global current_connection
-    print(f"Connecting to {vpn_file}")
+    """Обёртка для подключения VPN с отображением статуса в GUI."""
+    disconnect()
+    def worker():
+        global current_connection
+        process = connect_vpn(vpn_file)
 
-    connect_vpn()
+        if process:
+            # Успешное подключение
+            button.config(text="Connected", style="Success.TButton")
+            current_connection = vpn_file
+            status_label.config(text=f"Connected to {vpn_file.name}")
+            btn_disconnect.state(["!disabled"])
+        else:
+            # Неудача
+            button.config(text="Connect", style="Primary.TButton")
+            status_label.config(text=f"Failed to connect to {vpn_file.name}")
+            current_connection = None
 
-    # Эта кнопка становится зелёной
-    button.config(text="Connected", style="Success.TButton")
-    button.state(["disabled"])
-
-    # Остальные сбрасываем в синие "Connect"
-    for btn in connect_buttons:
-        if btn != button:
-            btn.config(text="Connect", style="Primary.TButton")
+        # Разблокируем все кнопки
+        for btn in connect_buttons:
             btn.state(["!disabled"])
+            if btn != button and current_connection is None:
+                btn.config(text="Connect", style="Primary.TButton")
 
-    btn_disconnect.state(["!disabled"])
-    status_label.config(text=f"Connected to {vpn_file.name}")
-    current_connection = vpn_file
+    # Сразу обновляем интерфейс: кнопка "Connecting…", блокируем остальные
+    button.config(text="Connecting...", style="Connecting.TButton")
+    for btn in connect_buttons:
+        btn.state(["disabled"])
+
+    threading.Thread(target=worker, daemon=True).start()
 
 def disconnect():
+    """Отключение VPN и обновление интерфейса."""
     global current_connection
     print("Disconnect function called")
-
-    disconnect_vpn(vpn_file)
-
-    # Все кнопки возвращаются в "Connect" (синие)
+    disconnect_vpn()
     for btn in connect_buttons:
         btn.config(text="Connect", style="Primary.TButton")
         btn.state(["!disabled"])
-
     btn_disconnect.state(["disabled"])
     current_connection = None
     status_label.config(text="No connection")
 
+
+# ===== Tkinter GUI =====
 root = tk.Tk()
 root.title("VPN Manager")
 root.minsize(420, 320)
 
-# ===== Стили =====
 style = ttk.Style(root)
 style.theme_use("clam")
 
-# Общие
-style.configure("TFrame", background="#F5F6F7")
-style.configure("TLabel", background="#F5F6F7", font=("Segoe UI", 10))
+# Стили
 style.configure("TButton", font=("Segoe UI", 10), padding=6)
-
-# Disconnect (красная)
 style.configure("Danger.TButton", foreground="white", background="#E74C3C")
 style.map("Danger.TButton", background=[("active", "#C0392B")])
-
-# Connect (синие)
 style.configure("Primary.TButton", foreground="white", background="#3498DB")
 style.map("Primary.TButton", background=[("active", "#2980B9")])
-
-# Connected (зелёные)
 style.configure("Success.TButton", foreground="white", background="#2ECC71")
 style.map("Success.TButton", background=[("active", "#27AE60")])
+style.configure("Connecting.TButton", foreground="black")
+style.map("Connecting.TButton", foreground=[("disabled", "black")])
 
-# ===== Интерфейс =====
 main_frame = ttk.Frame(root, padding=15)
 main_frame.pack(fill="both", expand=True)
 
@@ -103,7 +125,7 @@ btn_disconnect = ttk.Button(main_frame, text="Disconnect", style="Danger.TButton
 btn_disconnect.pack(pady=(0, 12), fill="x")
 btn_disconnect.state(["disabled"])
 
-vpn_dir = Path.home() / "Desktop/whoerconfigs_old"
+vpn_dir = Path("/etc/config/ovpn/")
 vpn_files = list(vpn_dir.glob("*.ovpn"))
 
 vpn_list_frame = ttk.Frame(main_frame)

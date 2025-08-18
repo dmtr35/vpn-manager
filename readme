@@ -1,0 +1,19 @@
+скопировать программу
+cp vpn-manager.py /usr/local/bin/vpn-manager
+
+дать права на выполнение:
+chown root:root /usr/local/bin/vpn-manager
+chmod 755 /usr/local/bin/vpn-manager
+
+добавить правило запуска без sudo для определенного пользователя в sudoers:
+sudo visudo
+user ALL=(ALL) NOPASSWD: /usr/sbin/openvpn
+user ALL=(ALL) NOPASSWD: /usr/bin/pkill -9 openvpn
+
+
+копируем ovpn-файлы:
+cp * /etc/config/ovpn
+
+
+
+
