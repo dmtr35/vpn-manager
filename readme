@@ -1,19 +1,55 @@
-скопировать программу
+Установка:
+
+Скопировать программу:
 cp vpn-manager.py /usr/local/bin/vpn-manager
 
-дать права на выполнение:
+Дать права на выполнение:
 chown root:root /usr/local/bin/vpn-manager
 chmod 755 /usr/local/bin/vpn-manager
 
-добавить правило запуска без sudo для определенного пользователя в sudoers:
+Добавить правило запуска без sudo для определенного пользователя в sudoers:
 sudo visudo
-user ALL=(ALL) NOPASSWD: /usr/sbin/openvpn
-user ALL=(ALL) NOPASSWD: /usr/bin/pkill -9 openvpn
+Cmnd_Alias OVPN_CMDS = \
+	/usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Austria_at.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Canada_ca.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_China_hk.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Czechia_cz.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_France_fr.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Germany_de.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Italy_it.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Japan_jp.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Latvia_lv.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Netherlands_nl.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Poland_pl.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Romania_ro.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Russia_ru.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_SouthKorea_kr.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Spain_es.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Sweden_se.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Thailand_th.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Turkey_tr.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_UK_gb.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Ukraine_ua.ovpn, \ 
+    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_USA_us.ovpn
+
+dm  ALL=(ALL) NOPASSWD: OVPN_CMDS
+dm  ALL=(ALL) NOPASSWD: /usr/bin/pkill -9 openvp
 
 
 копируем ovpn-файлы:
 cp * /etc/config/ovpn
 
 
-
+скачать иконку в /home/dm/.local/share/applications
+создать ярлык на рабочий стол
+cat > ~/.local/share/applications/vpn-manager.desktop << EOF 
+[Desktop Entry]
+Name=vpn-manager
+Exec=/usr/local/bin/vpn-manager
+Icon=/home/dm/.local/share/applications/vpn-manager.png
+Type=Application
+Categories=Development;
+Terminal=false
+StartupWMClass=vpn-manager
+EOF
 

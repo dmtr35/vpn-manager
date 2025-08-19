@@ -11,7 +11,7 @@ connect_buttons = []
 def disconnect_vpn():
     """Завершает все процессы OpenVPN."""
     try:
-        subprocess.run(["sudo", "pkill", "-9", "openvpn"], check=False)
+        subprocess.run(["sudo", "/usr/bin/pkill", "-9", "openvpn"], check=False)
         print("All OpenVPN processes killed.")
     except Exception as e:
         print(f"Error killing VPN processes: {e}")
@@ -20,7 +20,7 @@ def connect_vpn(vpn_file, timeout=3):
     """Запускает OpenVPN с выбранным конфигом и ждёт инициализации."""
     try:
         process = subprocess.Popen(
-            ["sudo", "openvpn", "--config", str(vpn_file)],
+            ["sudo", "/usr/sbin/openvpn", "--config", str(vpn_file)],
             stderr=subprocess.STDOUT,
             stdout=subprocess.PIPE,
             text=True
