@@ -98,6 +98,7 @@ def disconnect():
 
 # ===== Tkinter GUI =====
 root = tk.Tk()
+root.tk.call("tk", "appname", "vpn-manager")
 root.title("VPN Manager")
 root.minsize(420, 320)
 
