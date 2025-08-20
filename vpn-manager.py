@@ -41,10 +41,10 @@ def connect_vpn(vpn_file, timeout=3):
         t.join(timeout)
 
         if connected:
-            print(f"{vpn_file.name} connected successfully!")
+            print(f"{str(vpn_file.name).removesuffix('.ovpn')} connected successfully!")
             return process
         else:
-            print(f"{vpn_file.name} failed to connect within {timeout} seconds.")
+            print(f"{str(vpn_file.name).removesuffix('.ovpn')} failed to connect within {timeout} seconds.")
             disconnect_vpn()
             return False
     except Exception as e:
@@ -62,12 +62,12 @@ def connect(vpn_file, button):
             # Успешное подключение
             button.config(text="Connected", style="Success.TButton")
             current_connection = vpn_file
-            status_label.config(text=f"Connected to {vpn_file.name}")
+            status_label.config(text=f"Connected to {str(vpn_file.name).removesuffix('.ovpn')}")
             btn_disconnect.state(["!disabled"])
         else:
             # Неудача
             button.config(text="Connect", style="Primary.TButton")
-            status_label.config(text=f"Failed to connect to {vpn_file.name}")
+            status_label.config(text=f"Failed to connect to {str(vpn_file.name).removesuffix('.ovpn')}")
             current_connection = None
 
         # Разблокируем все кнопки
@@ -141,7 +141,7 @@ else:
         row = ttk.Frame(vpn_list_frame)
         row.pack(fill="x", pady=1)
 
-        label = ttk.Label(row, text=vpn_file.name, anchor="w")
+        label = ttk.Label(row, text=str(vpn_file.name).removesuffix(".ovpn"), anchor="w")
         label.pack(side="left", fill="x", expand=True)
 
         btn_connect = ttk.Button(row, text="Connect", style="Primary.TButton")
