@@ -32,21 +32,21 @@ Cmnd_Alias OVPN_CMDS = \
     /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Ukraine_ua.ovpn, \ 
     /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_USA_us.ovpn
 
-dm  ALL=(ALL) NOPASSWD: OVPN_CMDS
-dm  ALL=(ALL) NOPASSWD: /usr/bin/pkill -9 openvp
+user  ALL=(ALL) NOPASSWD: OVPN_CMDS
+user  ALL=(ALL) NOPASSWD: /usr/bin/pkill -9 openvp
 
 
 копируем ovpn-файлы:
 cp * /etc/config/ovpn
 
 
-скачать иконку в /home/dm/.local/share/applications
+скачать иконку в /home/user/.local/share/applications
 создать ярлык на рабочий стол
 cat > ~/.local/share/applications/vpn-manager.desktop << EOF 
 [Desktop Entry]
 Name=vpn-manager
 Exec=/usr/local/bin/vpn-manager
-Icon=/home/dm/.local/share/applications/vpn-manager.png
+Icon=/home/user/.local/share/applications/vpn-manager.png
 Type=Application
 Categories=Development;
 Terminal=false
