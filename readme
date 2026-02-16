@@ -10,27 +10,26 @@ chmod 755 /usr/local/bin/vpn-manager
 Добавить правило запуска без sudo для определенного пользователя в sudoers:
 sudo visudo
 Cmnd_Alias OVPN_CMDS = \
-	/usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Austria_at.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Canada_ca.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_China_hk.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Czechia_cz.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_France_fr.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Germany_de.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Italy_it.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Japan_jp.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Latvia_lv.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Netherlands_nl.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Poland_pl.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Romania_ro.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Russia_ru.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_SouthKorea_kr.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Spain_es.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Sweden_se.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Thailand_th.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Turkey_tr.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_UK_gb.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Ukraine_ua.ovpn, \ 
-    /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_USA_us.ovpn
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Austria_at.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Canada_ca.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_France_fr.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Germany_de.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Hong_Kong_hk.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Hungary_hg.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Italy_it.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Japan_jp.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Netherlands_nl.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Poland_pl.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Romania_ro.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Russia_ru.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Singapore_sg.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Spain_es.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Sweden_se.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Switzerland_ch.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Turkey_tr.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_Ukraine_ua.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_United_Kingdom_gb.ovpn, \
+  /usr/sbin/openvpn --config /etc/config/ovpn/Whoer_United_States_us.ovpn
 
 user  ALL=(ALL) NOPASSWD: OVPN_CMDS
 user  ALL=(ALL) NOPASSWD: /usr/bin/pkill -9 openvp
